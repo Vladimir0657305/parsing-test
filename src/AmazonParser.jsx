@@ -13,20 +13,13 @@ function AmazonParser() {
         event.preventDefault();
         const response = await axios.get(`${PROXY_URL}${SEARCH_URL}${searchTerm}`);
         const products = parseProducts(response.data);
+        // console.log(products);
         downloadCsv(products);
     };
 
     const handleSearchTermChange = (event) => {
         setSearchTerm(event.target.value);
     };
-
-    // const handleSearchSubmit = async (event) => {
-    //     event.preventDefault();
-    //     const response = await axios.get(`https://www.amazon.com/s?k=${searchTerm}`);
-    //     console.log(response);
-    //     const products = parseProducts(response.data);
-    //     downloadCsv(products);
-    // };
 
     const downloadCsv = (products) => {
         const csv = Papa.unparse(products);
@@ -39,23 +32,28 @@ function AmazonParser() {
     const parseProducts = (html) => {
         const parser = new DOMParser();
         const doc = parser.parseFromString(html, 'text/html');
+        // console.log(doc);
         const products = [];
 
+
+        const paginator = doc.querySelector('li.a-last > a');
+        console.log('paginator=', paginator.href);
+
         doc.querySelectorAll('div[data-component-type="s-search-result"]').forEach((item) => {
-            let price = 0;
-            console.log(item);
+            // console.log(item);
             const asinValue = item.dataset.asin;
             const title = item.querySelector('h2')?.textContent.trim() ?? '';
             const priceSymbol = item.querySelector('span.a-price-symbol')?.textContent.trim() ?? '';
             const priceWhole = item.querySelector('span.a-price-whole')?.textContent.trim() ?? '';
             const priceFraction = item.querySelector('span.a-price-fraction')?.textContent.trim() ?? '';
             // const price = parseFloat(`${priceWhole}.${priceFraction}`).toFixed(2);
-            if (priceWhole && priceFraction) {
-                price = parseFloat(`${priceWhole}.${priceFraction}`).toFixed(2);
-            }
+            // if (priceWhole && priceFraction) {
+            // price = parseFloat(`${priceWhole}.${priceFraction}`).toFixed(2);
+            // }
+            const price = priceWhole && priceFraction ? `${priceWhole}${priceFraction}` : "0";
+
             products.push({ asinValue, title, priceSymbol, price });
         });
-        // s-pagination-strip
 
         return products;
     };
