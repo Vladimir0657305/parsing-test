@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
 import axios from 'axios';
 import Papa from 'papaparse';
+import { CSVReader, CSVDownloader } from 'react-papaparse';
+
 
 function AmazonParser() {
     const [searchTerm, setSearchTerm] = useState('');
