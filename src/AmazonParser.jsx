@@ -37,7 +37,7 @@ function AmazonParser() {
 
 
         const paginator = doc.querySelector('li.a-last > a');
-        console.log('paginator=', paginator.href);
+        console.log('paginator=', paginator?.href);
 
         doc.querySelectorAll('div[data-component-type="s-search-result"]').forEach((item) => {
             // console.log(item);
@@ -46,13 +46,16 @@ function AmazonParser() {
             const priceSymbol = item.querySelector('span.a-price-symbol')?.textContent.trim() ?? '';
             const priceWhole = item.querySelector('span.a-price-whole')?.textContent.trim() ?? '';
             const priceFraction = item.querySelector('span.a-price-fraction')?.textContent.trim() ?? '';
+            const imageProductNew = item.querySelector('img.s-image')?.src.trim() ?? '';
+            const imageProduct = imageProductNew.replace(/._.*(?=\.jpg)/, '') + ".jpg";
+            // img.s-image
             // const price = parseFloat(`${priceWhole}.${priceFraction}`).toFixed(2);
             // if (priceWhole && priceFraction) {
             // price = parseFloat(`${priceWhole}.${priceFraction}`).toFixed(2);
             // }
             const price = priceWhole && priceFraction ? `${priceWhole}${priceFraction}` : "0";
 
-            products.push({ asinValue, title, priceSymbol, price });
+            products.push({ asinValue, title, imageProduct, priceSymbol, price });
         });
 
         return products;
