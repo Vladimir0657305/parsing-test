@@ -2,6 +2,8 @@
 import { useEffect } from 'react';
 import { useState } from 'react';
 import AmazonParser from './AmazonParser';
+import Papa from 'papaparse';
+import './App.css';
 
 
 // https://crm.ilist.gr
@@ -10,27 +12,18 @@ const API_URL = 'https://crm.ilist.gr';
 
 function App() {
   const [fig, setFig] = useState({});
-  const [products, setProducts] = useState([]);
+  const [data, setData] = useState([]);
 
-  useEffect(() => {
-    async function fetchData() {
-      const response = await fetch("amazon-products.csv");
-      const data = await response.text();
+  const handleFileUpload = (event) => {
+    const file = event.target.files[0];
 
-      const rows = data.split("\n").map((row) => row.split(","));
-      const headers = rows.shift();
-      const products = rows.map((row) =>
-        headers.reduce(
-          (obj, key, i) => ({ ...obj, [key]: row[i] }),
-          {}
-        )
-      );
-      setProducts(products);
-    }
-
-    fetchData();
-  }, []);
-
+    Papa.parse(file, {
+      header: true,
+      complete: (result) => {
+        setData(result.data);
+      }
+    });
+  };
 
   useEffect(() => {
     fetch('/api/properties')
@@ -49,13 +42,29 @@ function App() {
       <div><pre>{JSON.stringify(fig, null, 2)}</pre></div>
       <AmazonParser/>
 
-      {products.map((product, index) => (
-        <div key={index}>
-          <h2>{product.title}</h2>
-          <img src={product.imageProduct} alt={product.title} />
-          <p>{product.price}</p>
-        </div>
-      ))}
+      <input type="file" onChange={handleFileUpload} />
+      <table>
+        <thead>
+          <tr>
+            <th>asinValue</th>
+            <th>title</th>
+            <th>imageProduct</th>
+            <th>priceSymbol</th>
+            <th>price</th>
+          </tr>
+        </thead>
+        <tbody>
+          {data.map((row, index) => (
+            <tr key={index}>
+              <td>{row.asinValue}</td>
+              <td className='products_title'>{row.title}</td>
+              <td><img className='products_image' src={row.imageProduct} alt="Product" /></td>
+              <td className='products_symbol'>{row.priceSymbol}</td>
+              <td>{row.price}</td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
 
 
       {/* <table>
