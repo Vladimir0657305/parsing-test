@@ -12,14 +12,9 @@ function AmazonParser() {
     const handleSearchSubmit = async (event) => {
         event.preventDefault();
         const response = await axios.get(`${PROXY_URL}${SEARCH_URL}${searchTerm}`);
-        //        console.log(response.data);
         const products = parseProducts(response.data);
-        //        console.log(products);
         downloadCsv(products);
     };
-
-
-
 
     const handleSearchTermChange = (event) => {
         setSearchTerm(event.target.value);
@@ -47,11 +42,20 @@ function AmazonParser() {
         const products = [];
 
         doc.querySelectorAll('div[data-component-type="s-search-result"]').forEach((item) => {
+            let price = 0;
+            console.log(item);
             const asinValue = item.dataset.asin;
             const title = item.querySelector('h2')?.textContent.trim() ?? '';
-            const price = item.querySelector('span.a-price-whole')?.textContent.trim() ?? '';
-            products.push({ asinValue, title, price });
+            const priceSymbol = item.querySelector('span.a-price-symbol')?.textContent.trim() ?? '';
+            const priceWhole = item.querySelector('span.a-price-whole')?.textContent.trim() ?? '';
+            const priceFraction = item.querySelector('span.a-price-fraction')?.textContent.trim() ?? '';
+            // const price = parseFloat(`${priceWhole}.${priceFraction}`).toFixed(2);
+            if (priceWhole && priceFraction) {
+                price = parseFloat(`${priceWhole}.${priceFraction}`).toFixed(2);
+            }
+            products.push({ asinValue, title, priceSymbol, price });
         });
+        // s-pagination-strip
 
         return products;
     };
