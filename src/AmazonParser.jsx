@@ -10,6 +10,7 @@ function AmazonParser() {
     let products = [];
     const [searchTerm, setSearchTerm] = useState('');
     const valueToRemove = 'http://localhost:3000';
+    const hrefValuesArray = [];
 
     const PROXY_URL = 'https://cors-anywhere.herokuapp.com/';
     const SEARCH_URL = `https://www.amazon.com/s?k=`;
@@ -18,7 +19,7 @@ function AmazonParser() {
 
     const handleSearchSubmit = async (event) => {
         event.preventDefault();
-        for (let index = 0; index < 6; index++) {
+        for (let index = 0; index < 4; index++) {
             
         if (paginator === undefined) {
             let response = await axios.get(`${PROXY_URL}${SEARCH_URL}${searchTerm}`);
@@ -37,6 +38,7 @@ function AmazonParser() {
         // }
 
         // console.log(products);
+            console.log('hrefValuesArray=', hrefValuesArray);
     }
     };
 
@@ -62,6 +64,12 @@ function AmazonParser() {
         console.log('LINK=', link);
         paginator = link?.href.replace(valueToRemove, '');
         console.log('paginator=', paginator);
+        
+        let links = doc.querySelectorAll('li > a');
+        // hrefValuesArray = Array.from(links).map(link => link.getAttribute('href'));
+        console.log('33333=', links);
+
+        
 
         doc.querySelectorAll('div[data-component-type="s-search-result"]').forEach((item) => {
             // console.log(item);
