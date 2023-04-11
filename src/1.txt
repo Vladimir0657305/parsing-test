@@ -1,2 +1,24 @@
-В коде <div class="a-section a-text-center s-pagination-container" role="navigation"><span class="s-pagination-strip"><span class="s-pagination-item s-pagination-previous s-pagination-disabled " aria-disabled="true"><svg xmlns="http://www.w3.org/2000/svg" width="8" height="12" viewBox="0 0 8 12" focusable="false" aria-hidden="true"><path d="M5.874.35a1.28 1.28 0 011.761 0 1.165 1.165 0 010 1.695L3.522 6l4.113 3.955a1.165 1.165 0 010 1.694 1.28 1.28 0 01-1.76 0L0 6 5.874.35z"></path></svg>Previous</span><script>P.declare('s\-optimized\-pagination\-config', {"prefetchTargetIndex":0,"enabled":true});</script><span class="s-pagination-item s-pagination-selected" aria-label="Current page, page 1">1</span><a href="/s?k=kindle&amp;page=2&amp;crid=32VET7UT2LMYA&amp;qid=1681216005&amp;sprefix=kindle%2Caps%2C188&amp;ref=sr_pg_2" aria-label="Go to page 2" class="s-pagination-item s-pagination-button">2</a><a href="/s?k=kindle&amp;page=3&amp;crid=32VET7UT2LMYA&amp;qid=1681216005&amp;sprefix=kindle%2Caps%2C188&amp;ref=sr_pg_3" aria-label="Go to page 3" class="s-pagination-item s-pagination-button">3</a><a href="/s?k=kindle&amp;page=2&amp;crid=32VET7UT2LMYA&amp;qid=1681216005&amp;sprefix=kindle%2Caps%2C188&amp;ref=sr_pg_1" aria-label="Go to next page, page 2" class="s-pagination-item s-pagination-next s-pagination-button s-pagination-separator">Next<svg xmlns="http://www.w3.org/2000/svg" width="8" height="12" viewBox="0 0 8 12" focusable="false" aria-hidden="true"><path d="M2.126.35a1.28 1.28 0 00-1.761 0 1.165 1.165 0 000 1.695L4.478 6 .365 9.955a1.165 1.165 0 000 1.694 1.28 1.28 0 001.76 0L8 6 2.126.35z"></path></svg></a></span></div>
-есть элементы "a", в которых есть теги href. Напиши код как в React сохранить значения всех тегов href в массив.
+В коде 
+while (index < 4) {
+            if (paginator === undefined) {
+                let response = await axios.get(`${PROXY_URL}${SEARCH_URL}${searchTerm}`);
+                products = parseProducts(response.data);
+                index++;
+            }
+            else {
+                const delayTime = Math.floor(Math.random() * 3001) + 2000;
+                setTimeout(() => {
+                    nextSearch();
+                }, delayTime);
+                index++;
+            }
+        }
+    };
+
+    const nextSearch = async () => {
+        let response = await axios.get(`${PROXY_URL}${NEXT_URL}${paginator}`);
+        products = parseProducts(response.data);
+        downloadCsv(products);
+    }
+счетчик в цикле while пробегант все значения до того, как отработает запрос let response = await axios.get(`${PROXY_URL}${NEXT_URL}${paginator}`);
+Как сделать увеличение счетчика index после получения ответа await axios.get(`${PROXY_URL}${NEXT_URL}${paginator}`) ?

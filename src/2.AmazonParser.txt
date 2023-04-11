@@ -16,41 +16,40 @@ function AmazonParser() {
     const NEXT_URL = `https://www.amazon.com`;
 
 
-    const delay = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
-
-    const fetchData = async (url) => {
-        const response = await axios.get(url);
-        return response.data;
-    };
-
-
     const handleSearchSubmit = async (event) => {
         event.preventDefault();
         let index = 0;
-        while (index < 10) {
+        // for (let index = 0; index < 4; index++) {
+        while (index < 4) {
             if (paginator === undefined) {
-                let response = await fetchData(`${PROXY_URL}${SEARCH_URL}${searchTerm}`);
-                products = parseProducts(response);
-                index++;
-            } else {
-                const delayTime = Math.floor(Math.random() * 3001) + 2000;
-                await delay(delayTime);
-                await nextSearch();
+                let response = await axios.get(`${PROXY_URL}${SEARCH_URL}${searchTerm}`);
+                console.log(response);
+                products = parseProducts(response.data);
+                console.log('1111=', products);
+                // downloadCsv(products);
                 index++;
             }
+            else {
+                
+                const delayTime = Math.floor(Math.random() * 3001) + 2000;
+                console.log('!!!!!!!!!!=', index, delayTime);
+                setTimeout(async () => {
+                    await nextSearch();
+                }, delayTime);
+            }
+            console.log('hrefValuesArray=', hrefValuesArray);
         }
-        downloadCsv(products);
     };
 
     const nextSearch = async () => {
         let t = `${PROXY_URL}${NEXT_URL}${paginator}`;
-        console.log('000000000=', t);
-        const response = await fetchData(`${PROXY_URL}${NEXT_URL}${paginator}`);
-        products = parseProducts(response);
+        console.log('000000000=', index, t);
+        let response = await axios.get(`${PROXY_URL}${NEXT_URL}${paginator}`);
+        products = parseProducts(response.data);
         console.log('2222=', products);
-        
-    };
-
+        downloadCsv(products);
+        index++;
+    }
 
     const handleSearchTermChange = (event) => {
         setSearchTerm(event.target.value);
@@ -59,12 +58,20 @@ function AmazonParser() {
     const parseProducts = (html) => {
         const parser = new DOMParser();
         const doc = parser.parseFromString(html, 'text/html');
+        // console.log(doc);
+
 
         let link = doc.querySelector('li.a-last > a');
         console.log('LINK=', link);
         let temp = link?.href.replace(valueToRemove, '');
         paginator = temp;
         console.log('paginator=', paginator);
+
+        // let links = doc.querySelectorAll('div.s-pagination-container');
+        // hrefValuesArray = Array.from(links).map(link => link.getAttribute('href'));
+        // console.log('33333=', links);
+
+
 
         doc.querySelectorAll('div[data-component-type="s-search-result"]').forEach((item) => {
             // console.log(item);
@@ -87,6 +94,8 @@ function AmazonParser() {
 
         return products;
     };
+
+    // setSearchTerm(paginator);
 
     const downloadCsv = (products) => {
         const csv = Papa.unparse(products);
