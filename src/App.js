@@ -1,8 +1,5 @@
-
-import { useEffect } from 'react';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import AmazonParser from './AmazonParser';
-// import Hidemy from './hidemy';
 import Papa from 'papaparse';
 import './App.css';
 
@@ -10,12 +7,18 @@ import './App.css';
 
 // https://crm.ilist.gr
 // https://hidemy.name/ru/proxy-list/
+// использовать прокси-сервер
 
 const API_URL = 'https://crm.ilist.gr';
 
+
 function App() {
+  const PROXY_URL = 'https://cors-anywhere.herokuapp.com/';
+  const SEARCH_URL = `https://hidemy.name/ru/proxy-list/`;
   const [fig, setFig] = useState({});
   const [data, setData] = useState([]);
+  const [proxyData, setProxyData] = useState('');
+  const [error, setError] = useState(null);
 
   const handleFileUpload = (event) => {
     const file = event.target.files[0];
@@ -40,43 +43,32 @@ function App() {
 
 
 
-  const puppeteer = require('puppeteer');
-  const cheerio = require('cheerio');
-  const ObjectsToCsv = require('objects-to-csv');
-  // const net = require('net');
-  // const tls = require('tls');
-  // const url = require('url');
-  // const assert = require('assert');
-  // const { module } = require('module');
+  
+  
 
+    useEffect(() => {
+      const fetchData = async () => {
+        try {
+          const response = await fetch(`${PROXY_URL}${SEARCH_URL}`);
+          const data = await response.text();
+          // console.log(data);
+          const raw = data.split('tbody>')[1].split('</tbody')[0];
+          const arr = raw.split("<td>");
+          for (let i = 0; i < arr.length - 2; i += 7) {
+            console.log(arr[i + 1].slice(0, -5), arr[i + 2].slice(0, -5));
+          }
+          setProxyData(raw); // сохраняем "сырой" контент таблицы в состоянии компонента
+        } catch (error) {
+          setError('Failed to fetch data');
+          console.error(error);
+        }
+      };
 
-  (async () => {
-    const browser = await puppeteer.launch();
-    const page = await browser.newPage();
-    await page.goto('https://hidemy.name/ru/proxy-list/');
+      fetchData();
+    }, []);
 
-    const content = await page.content();
-    const $ = cheerio.load(content);
+  
 
-    const raw = $('tbody').html();
-    const arr = raw.split('<td>');
-
-    const parsedData = [];
-
-    for (let i = 0; i < arr.length - 2; i += 7) {
-      parsedData.push({
-        field1: arr[i + 1].slice(0, -5),
-        field2: arr[i + 2].slice(0, -5)
-      });
-    }
-
-    await browser.close();
-
-    const csv = new ObjectsToCsv(parsedData);
-    await csv.toDisk('parsed_data.csv');
-
-    console.log('Data has been parsed and saved to CSV file.');
-  })();
 
 
 
@@ -110,7 +102,9 @@ function App() {
       </table>
 
 
-      {/* <Hidemy /> */}
+      {/* <h1>Пример использования прокси-сервера в React</h1>
+      <pre>{proxyData}</pre> */}
+
     </>
   );
 }
