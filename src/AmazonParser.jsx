@@ -6,7 +6,6 @@ import { CSVReader, CSVDownloader } from 'react-papaparse';
 
 function AmazonParser() {
     let paginator = undefined;
-    console.log('PAGINATOR=', paginator);
     let products = [];
     const [searchTerm, setSearchTerm] = useState('');
     const valueToRemove = 'http://localhost:3000';
@@ -19,32 +18,33 @@ function AmazonParser() {
 
     const handleSearchSubmit = async (event) => {
         event.preventDefault();
-        for (let index = 0; index < 4; index++) {
-            
-        if (paginator === undefined) {
-            let response = await axios.get(`${PROXY_URL}${SEARCH_URL}${searchTerm}`);
-            products = parseProducts(response.data);
-            console.log('1111=', products);
-            // downloadCsv(products);
-        } 
-        else  {
-            const delayTime = Math.floor(Math.random() * 3001) + 2000;
-            setTimeout(() => {
-                nextSearch();
-            }, delayTime);
-        } 
-        // else {
-        //     downloadCsv(products);
-        // }
-
-        // console.log(products);
+        let index = 0;
+        // for (let index = 0; index < 4; index++) {
+        while (index < 4) {
+            if (paginator === undefined) {
+                let response = await axios.get(`${PROXY_URL}${SEARCH_URL}${searchTerm}`);
+                console.log(response);
+                products = parseProducts(response.data);
+                console.log('1111=', products);
+                // downloadCsv(products);
+                index++;
+            }
+            else {
+                const delayTime = Math.floor(Math.random() * 3001) + 2000;
+                setTimeout(() => {
+                    nextSearch(index);
+                    
+                }, delayTime);
+                index++;
+            }
             console.log('hrefValuesArray=', hrefValuesArray);
-    }
+        }
     };
 
-    const nextSearch = async () => {
+    const nextSearch = async (index) => {
+        let t = `${PROXY_URL}${NEXT_URL}${paginator}`;
+        console.log('000000000=', index, t);
         let response = await axios.get(`${PROXY_URL}${NEXT_URL}${paginator}`);
-        console.log(response);
         products = parseProducts(response.data);
         console.log('2222=', products);
         downloadCsv(products);
@@ -58,18 +58,19 @@ function AmazonParser() {
         const parser = new DOMParser();
         const doc = parser.parseFromString(html, 'text/html');
         // console.log(doc);
-        
+
 
         let link = doc.querySelector('li.a-last > a');
         console.log('LINK=', link);
-        paginator = link?.href.replace(valueToRemove, '');
+        let temp = link?.href.replace(valueToRemove, '');
+        paginator = temp;
         console.log('paginator=', paginator);
-        
-        let links = doc.querySelectorAll('div.s-pagination-container');
-        // hrefValuesArray = Array.from(links).map(link => link.getAttribute('href'));
-        console.log('33333=', links);
 
-        
+        // let links = doc.querySelectorAll('div.s-pagination-container');
+        // hrefValuesArray = Array.from(links).map(link => link.getAttribute('href'));
+        // console.log('33333=', links);
+
+
 
         doc.querySelectorAll('div[data-component-type="s-search-result"]').forEach((item) => {
             // console.log(item);
