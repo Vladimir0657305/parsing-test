@@ -10,7 +10,7 @@ function AmazonParser() {
     let products = [];
     const [searchTerm, setSearchTerm] = useState('');
     const valueToRemove = 'http://localhost:3000';
-    const hrefValuesArray = [];
+    let hrefValuesArray = [];
 
     const PROXY_URL = 'https://cors-anywhere.herokuapp.com/';
     const SEARCH_URL = `https://www.amazon.com/s?k=`;
@@ -44,7 +44,7 @@ function AmazonParser() {
 
     const nextSearch = async () => {
         let response = await axios.get(`${PROXY_URL}${NEXT_URL}${paginator}`);
-        // console.log(response);
+        console.log(response);
         products = parseProducts(response.data);
         console.log('2222=', products);
         downloadCsv(products);
@@ -65,7 +65,7 @@ function AmazonParser() {
         paginator = link?.href.replace(valueToRemove, '');
         console.log('paginator=', paginator);
         
-        let links = doc.querySelectorAll('li > a');
+        let links = doc.querySelectorAll('div.s-pagination-container');
         // hrefValuesArray = Array.from(links).map(link => link.getAttribute('href'));
         console.log('33333=', links);
 
