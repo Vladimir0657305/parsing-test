@@ -5,10 +5,11 @@ import { CSVReader, CSVDownloader } from 'react-papaparse';
 
 
 function AmazonParser() {
-    let paginator = '';
+    let paginator = undefined;
+    console.log('PAGINATOR=', paginator);
     let products = [];
     const [searchTerm, setSearchTerm] = useState('');
-
+    const valueToRemove = 'http://localhost:3000';
 
     const PROXY_URL = 'https://cors-anywhere.herokuapp.com/';
     const SEARCH_URL = `https://www.amazon.com/s?k=`;
@@ -17,24 +18,35 @@ function AmazonParser() {
 
     const handleSearchSubmit = async (event) => {
         event.preventDefault();
-        if (paginator) {
+        for (let index = 0; index < 6; index++) {
+            
+        if (paginator === undefined) {
             let response = await axios.get(`${PROXY_URL}${SEARCH_URL}${searchTerm}`);
             products = parseProducts(response.data);
+            console.log('1111=', products);
             // downloadCsv(products);
-        } else if (paginator ) {
-            const delayTime = Math.floor(Math.random() * (max - min + 1)) + min;
+        } 
+        else  {
+            const delayTime = Math.floor(Math.random() * 3001) + 2000;
             setTimeout(() => {
-                let response = axios.get(`${PROXY_URL}${NEXT_URL}${paginator}`);
-                products = parseProducts(response.data);
-                // downloadCsv(products);
+                nextSearch();
             }, delayTime);
-        } else {
-            downloadCsv(products);
-        }
+        } 
+        // else {
+        //     downloadCsv(products);
+        // }
 
         // console.log(products);
-
+    }
     };
+
+    const nextSearch = async () => {
+        let response = await axios.get(`${PROXY_URL}${NEXT_URL}${paginator}`);
+        // console.log(response);
+        products = parseProducts(response.data);
+        console.log('2222=', products);
+        downloadCsv(products);
+    }
 
     const handleSearchTermChange = (event) => {
         setSearchTerm(event.target.value);
@@ -44,10 +56,12 @@ function AmazonParser() {
         const parser = new DOMParser();
         const doc = parser.parseFromString(html, 'text/html');
         // console.log(doc);
-        const products = [];
+        
 
-        paginator = doc.querySelector('li.a-last > a');
-        console.log('paginator=', paginator?.href);
+        let link = doc.querySelector('li.a-last > a');
+        console.log('LINK=', link);
+        paginator = link?.href.replace(valueToRemove, '');
+        console.log('paginator=', paginator);
 
         doc.querySelectorAll('div[data-component-type="s-search-result"]').forEach((item) => {
             // console.log(item);
