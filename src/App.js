@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import AmazonParser from './AmazonParser';
+import McbatxParser from './McbatxParser';
 import Papa from 'papaparse';
 import './App.css';
 
@@ -75,7 +76,8 @@ function App() {
   return (
     <>
       <div><pre>{JSON.stringify(fig, null, 2)}</pre></div>
-      <AmazonParser/>
+      {/* <AmazonParser/> */}
+      <McbatxParser/>
 
       <input type="file" onChange={handleFileUpload} />
       <table>
