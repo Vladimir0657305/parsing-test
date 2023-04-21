@@ -76,7 +76,7 @@ function App() {
   return (
     <>
       <div><pre>{JSON.stringify(fig, null, 2)}</pre></div>
-      {/* <AmazonParser/> */}
+      <AmazonParser/>
       <McbatxParser/>
 
       <input type="file" onChange={handleFileUpload} />

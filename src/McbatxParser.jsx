@@ -56,8 +56,8 @@ function McbatxParser() {
     };
 
     const pageSearch = async (link) => {
-        console.log('pageSearch=>');
         const delayTime = Math.floor(Math.random() * 3001) + 1000;
+        console.log('pageSearch=>', delayTime, `${PROXY_URL}${PAGE_URL}${link}`);
         await delay(delayTime);
         const response = await fetchData(`${PROXY_URL}${PAGE_URL}${link}`);
         products = parsePage(response);
@@ -98,7 +98,7 @@ function McbatxParser() {
             const phone = item.querySelector('p.phone > a')?.href ?? '';
             const firm = item.querySelector('p.firm')?.textContent.trim() ?? '';
             console.log(title, address, email, phone, firm);
-            productes.push({ title, address, email, phone, firm });
+            products.push({ title, address, email, phone, firm });
         });
 
         return products;
