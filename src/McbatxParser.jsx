@@ -1,14 +1,14 @@
 import React, { useState } from 'react';
 import axios from 'axios';
 import Papa from 'papaparse';
-// import { CSVReader, CSVDownloader } from 'react-papaparse';
 
 
 function McbatxParser() {
     let paginator = 2;
     let link = '';
     let products = [];
-    let lastPage = 3;
+    let productes = [];
+    let lastPage = 1;
     const [searchTerm, setSearchTerm] = useState('');
     const valueToRemove = 'http://localhost:3000';
     let hrefValuesArray = [];
@@ -55,12 +55,13 @@ function McbatxParser() {
         paginator++;
     };
 
-    const pageSearch = async () => {
+    const pageSearch = async (link) => {
+        console.log('pageSearch=>');
         const delayTime = Math.floor(Math.random() * 3001) + 1000;
         await delay(delayTime);
         const response = await fetchData(`${PROXY_URL}${PAGE_URL}${link}`);
         products = parsePage(response);
-        // console.log('2222=', products);
+
 
     };
 
@@ -76,7 +77,7 @@ function McbatxParser() {
             link = item.href.replace(valueToRemove, '');
             const nameMan = item.innerHTML;
 
-            pageSearch();
+            pageSearch(link);
             console.log(nameMan, link);
             // products.push({ nameMan });
         });
@@ -90,12 +91,14 @@ function McbatxParser() {
 
         doc.querySelectorAll('div.info-mother').forEach((item) => {
             const title = item.querySelector('h4.name')?.textContent.trim() ?? '';
-            console.log(title);
-            const address = item.querySelector('.addres')?.textContent.trim() ?? '';
+            const address = item.querySelector('p.addres')?.textContent.trim() ?? '';
+            console.log('address=', address);
             const email = item.querySelector('.email > a')?.href ?? '';
-            const firm = item.querySelector('.firm > a')?.textContent.trim() ?? '';
-
-            products.push({ title, address, email, firm });
+            console.log('email=', email)
+            const phone = item.querySelector('p.phone > a')?.href ?? '';
+            const firm = item.querySelector('p.firm')?.textContent.trim() ?? '';
+            console.log(title, address, email, phone, firm);
+            productes.push({ title, address, email, phone, firm });
         });
 
         return products;
@@ -114,7 +117,7 @@ function McbatxParser() {
         <div>
             <form onSubmit={handleSearchSubmit}>
                 <input type="text" value={searchTerm} onChange={handleSearchTermChange} />
-                <button type="submit">Parse Products</button>
+                <button type="submit">Start</button>
             </form>
         </div>
     );
