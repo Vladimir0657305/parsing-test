@@ -4,7 +4,7 @@ import Papa from 'papaparse';
 // import { CSVReader, CSVDownloader } from 'react-papaparse';
 
 
-function AmazonParser() {
+function Bloomberg_profiles_company() {
     let paginator = 0;
     let products = [];
     const lastPage = 1;
@@ -24,6 +24,10 @@ function AmazonParser() {
         return response.data;
     };
 
+    const handleSearchTermChange = (event) => {
+        setSearchTerm(event.target.value);
+    };
+
 
     const handleSearchSubmit = async (event) => {
         event.preventDefault();
@@ -31,11 +35,10 @@ function AmazonParser() {
         while (index < lastPage) {
             const delayTime = Math.floor(Math.random() * 3001) + 2000;
             await delay(delayTime);
-                let response = await fetchData(`${PROXY_URL}${SEARCH_URL}`);
-                products = parseProducts(response);
-                index++;
-                paginator++;
-            }
+            let response = await fetchData(`${PROXY_URL}${SEARCH_URL}`);
+            products = parseProducts(response);
+            index++;
+            paginator++;
         }
         downloadCsv(products);
     };
@@ -46,49 +49,44 @@ function AmazonParser() {
         const parser = new DOMParser();
         const doc = parser.parseFromString(html, 'text/html');
 
-        let link = doc.querySelector('li.a-last > a');
-        console.log('LINK=', link);
-        let temp = link?.href.replace(valueToRemove, '');
-        paginator = temp;
-        console.log('paginator=', paginator);
+        doc.querySelectorAll('loc ').forEach(async (item) => {
+            let link = item.textContent.trim() ?? '';
+            products.push(link);
+            console.log('LINK=', link);
+            const delayTime = Math.floor(Math.random() * 3001) + 2000;
+            await delay(delayTime);
+            await nextSearch(link);
 
-        doc.querySelectorAll('div[data-component-type="s-search-result"]').forEach((item) => {
-            // console.log(item);
-            const asinValue = item.dataset.asin;
-            const title = item.querySelector('h2')?.textContent.trim() ?? '';
-            const priceSymbol = item.querySelector('span.a-price-symbol')?.textContent.trim() ?? '';
-            const priceWhole = item.querySelector('span.a-price-whole')?.textContent.trim() ?? '';
-            const priceFraction = item.querySelector('span.a-price-fraction')?.textContent.trim() ?? '';
-            const imageProductNew = item.querySelector('img.s-image')?.src.trim() ?? '';
-            const imageProduct = imageProductNew.replace(/._.*(?=\.jpg)/, '') + ".jpg";
-            // img.s-image
-            // const price = parseFloat(`${priceWhole}.${priceFraction}`).toFixed(2);
-            // if (priceWhole && priceFraction) {
-            // price = parseFloat(`${priceWhole}.${priceFraction}`).toFixed(2);
-            // }
-            const price = priceWhole && priceFraction ? `${priceWhole}${priceFraction}` : "0";
-
-            products.push({ asinValue, title, imageProduct, priceSymbol, price });
         });
 
         return products;
     };
 
 
-    const nextSearch = async () => {
-        let t = `${PROXY_URL}${NEXT_URL}${paginator}`;
+    const nextSearch = async (link) => {
+        let t = `${PROXY_URL}${link}`;
         console.log('000000000=', t);
-        const response = await fetchData(`${PROXY_URL}${NEXT_URL}${paginator}`);
-        products = parseProducts(response);
+        const response = await fetchData(`${PROXY_URL}${link}`);
+        products = parsePage(response);
         console.log('2222=', products);
 
     };
-    
+
+    const parsePage = (html) => {
+        const parser = new DOMParser();
+        const doc = parser.parseFromString(html, 'text/html');
+        // h1.companyName__0081a26a89
+        const title = doc.querySelector('h1.companyName__0081a26a89')?.textContent.trim() ?? '';
+        console.log(title);
+        products.push(title);
+        return products;
+    }
+
     const downloadCsv = (products) => {
         const csv = Papa.unparse(products);
         const downloadLink = document.createElement('a');
         downloadLink.setAttribute('href', 'data:text/csv;charset=utf-8,' + encodeURIComponent(csv));
-        downloadLink.setAttribute('download', 'amazon-products.csv');
+        downloadLink.setAttribute('download', 'Bloomberg_profiles_company.csv');
         downloadLink.click();
     };
 
@@ -97,10 +95,10 @@ function AmazonParser() {
         <div>
             <form onSubmit={handleSearchSubmit}>
                 <input type="text" value={searchTerm} onChange={handleSearchTermChange} />
-                <button type="submit">Parse Products</button>
+                <button type="submit">Start Bloomberg_profiles_company</button>
             </form>
         </div>
     );
 }
 
-export default AmazonParser;
+export default Bloomberg_profiles_company;
