@@ -115,7 +115,7 @@ function McbatxParser() {
         const phone = doc.querySelector('div.info-mother p.phone > a')?.textContent.trim() ?? '';
         const firm = doc.querySelector('div.info-mother p.firm')?.textContent.trim() ?? '';
         console.log(title, address, email, phone, firm);
-        products.push({ title, address, website, email, phone, firm });
+        // products.push({ title, address, website, email, phone, firm });
         console.log(products, isLoading);
         setLoading(true);
         console.log(isLoading);
