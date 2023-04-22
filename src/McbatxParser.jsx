@@ -37,8 +37,6 @@ function McbatxParser() {
                 // console.log(products);
                 index++;
             } else {
-                const delayTime = Math.floor(Math.random() * 3001) + 2000;
-                await delay(delayTime);
                 await nextSearch();
                 index++;
             }
@@ -47,23 +45,17 @@ function McbatxParser() {
     };
 
     const nextSearch = async () => {
+        const delayTime = Math.floor(Math.random() * 3001) + 2000;
+        await delay(delayTime);
         let t = `${PROXY_URL}${NEXT_URL}${paginator}`;
-        console.log('000000000=', t);
+        console.log('000000000=', delayTime, t);
         const response = await fetchData(`${PROXY_URL}${NEXT_URL}${paginator}`);
         products = parseProducts(response);
         // console.log('2222=', products);
         paginator++;
     };
 
-    const pageSearch = async (link) => {
-        const delayTime = Math.floor(Math.random() * 3001) + 1000;
-        console.log('pageSearch=>', delayTime, `${PROXY_URL}${PAGE_URL}${link}`);
-        await delay(delayTime);
-        const response = await fetchData(`${PROXY_URL}${PAGE_URL}${link}`);
-        products = parsePage(response);
 
-
-    };
 
 
     const handleSearchTermChange = (event) => {
@@ -78,18 +70,25 @@ function McbatxParser() {
             const nameMan = item.innerHTML;
 
             pageSearch(link);
-            console.log(nameMan, link);
+            console.log(nameMan, '===>', link);
             // products.push({ nameMan });
         });
-
         return products;
+    };
+
+    const pageSearch = async (link) => {
+        const delayTime = Math.floor(Math.random() * 3001) + 1000;
+        console.log('pageSearch=>', delayTime, `${PROXY_URL}${PAGE_URL}${link}`);
+        await delay(delayTime);
+        const response = await fetchData(`${PROXY_URL}${PAGE_URL}${link}`);
+        products = parsePage(response);
     };
 
     const parsePage = (html) => {
         const parser = new DOMParser();
         const doc = parser.parseFromString(html, 'text/html');
 
-        doc.querySelectorAll('div.info-mother').forEach((item) => {
+            const item = doc.querySelectorAll('div.info-mother');
             const title = item.querySelector('h4.name')?.textContent.trim() ?? '';
             const address = item.querySelector('p.addres')?.textContent.trim() ?? '';
             console.log('address=', address);
@@ -99,8 +98,6 @@ function McbatxParser() {
             const firm = item.querySelector('p.firm')?.textContent.trim() ?? '';
             console.log(title, address, email, phone, firm);
             products.push({ title, address, email, phone, firm });
-        });
-
         return products;
     };
 
