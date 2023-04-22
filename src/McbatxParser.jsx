@@ -7,6 +7,7 @@ function McbatxParser() {
     let paginator = 2;
     let link = '';
     let products = [];
+    let links = [];
     let lastPage = 1;
     const [searchTerm, setSearchTerm] = useState('');
     const [isLoading, setLoading] = useState(false);
@@ -65,12 +66,11 @@ function McbatxParser() {
     const parseProducts = async (html) => {
         const parser = new DOMParser();
         const doc = parser.parseFromString(html, 'text/html');
+        links = [];
         doc.querySelectorAll('div.member-info h4 > a').forEach(async (item) => {
-            link = item.href.replace(valueToRemove, '');
+            links.push(item.href.replace(valueToRemove, ''));
             const nameMan = item.innerHTML;
-            const delayTime = Math.floor(Math.random() * 3001) + 1000;
-            await delay(delayTime);
-            await pageSearch(link);
+
             console.log(nameMan, '===>', link);
             // products.push({ nameMan });
             // const delayTime = Math.floor(Math.random() * 3001) + 1000;
@@ -79,6 +79,12 @@ function McbatxParser() {
             // const response = await fetchData(`${PROXY_URL}${PAGE_URL}${link}`);
             // products = parsePage(response);
         });
+        links.forEach(async (item) => {
+            const delayTime = Math.floor(Math.random() * 3001) + 1000;
+            // await delay(delayTime);
+            await later(delayTime);
+            await pageSearch(item);
+        })
 
         return products;
     };
@@ -87,7 +93,7 @@ function McbatxParser() {
         const delayTime = Math.floor(Math.random() * 3001) + 1000;
         console.log('pageSearch=>', delayTime, `${PROXY_URL}${PAGE_URL}${link}`);
         // await delay(delayTime);
-        await later(delayTime); // где ms - количество миллисекунд задержки
+        await later(delayTime);
 
         const response = await fetchData(`${PROXY_URL}${PAGE_URL}${link}`);
         products = parsePage(response);
