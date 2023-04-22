@@ -7,7 +7,6 @@ function McbatxParser() {
     let paginator = 2;
     let link = '';
     let products = [];
-    let productes = [];
     let lastPage = 1;
     const [searchTerm, setSearchTerm] = useState('');
     const valueToRemove = 'http://localhost:3000';
@@ -34,10 +33,18 @@ function McbatxParser() {
             if (paginator === undefined) {
                 let response = await fetchData(`${PROXY_URL}${SEARCH_URL}`);
                 products = parseProducts(response);
-                // console.log(products);
+                console.log('PRODUCTS 111 =', products);
                 index++;
             } else {
-                await nextSearch();
+                // await nextSearch();
+                const delayTime = Math.floor(Math.random() * 3001) + 2000;
+                await delay(delayTime);
+                let t = `${PROXY_URL}${NEXT_URL}${paginator}`;
+                console.log('000000000=', delayTime, t);
+                const response = await fetchData(`${PROXY_URL}${NEXT_URL}${paginator}`);
+                products = parseProducts(response);
+                console.log('PRODUCTS 222 =', products);
+                paginator++;
                 index++;
             }
         }
@@ -45,14 +52,10 @@ function McbatxParser() {
     };
 
     const nextSearch = async () => {
-        const delayTime = Math.floor(Math.random() * 3001) + 2000;
-        await delay(delayTime);
-        let t = `${PROXY_URL}${NEXT_URL}${paginator}`;
-        console.log('000000000=', delayTime, t);
-        const response = await fetchData(`${PROXY_URL}${NEXT_URL}${paginator}`);
-        products = parseProducts(response);
+
+
         // console.log('2222=', products);
-        paginator++;
+
     };
 
 
@@ -68,7 +71,6 @@ function McbatxParser() {
         doc.querySelectorAll('div.member-info h4 > a').forEach((item) => {
             link = item.href.replace(valueToRemove, '');
             const nameMan = item.innerHTML;
-
             pageSearch(link);
             console.log(nameMan, '===>', link);
             // products.push({ nameMan });
@@ -82,22 +84,26 @@ function McbatxParser() {
         await delay(delayTime);
         const response = await fetchData(`${PROXY_URL}${PAGE_URL}${link}`);
         products = parsePage(response);
+
     };
 
     const parsePage = (html) => {
         const parser = new DOMParser();
         const doc = parser.parseFromString(html, 'text/html');
 
-            const item = doc.querySelectorAll('div.info-mother');
-            const title = item.querySelector('h4.name')?.textContent.trim() ?? '';
-            const address = item.querySelector('p.addres')?.textContent.trim() ?? '';
-            console.log('address=', address);
-            const email = item.querySelector('.email > a')?.href ?? '';
-            console.log('email=', email)
-            const phone = item.querySelector('p.phone > a')?.href ?? '';
-            const firm = item.querySelector('p.firm')?.textContent.trim() ?? '';
-            console.log(title, address, email, phone, firm);
-            products.push({ title, address, email, phone, firm });
+        const title = doc.querySelector('div.info-mother h4.name')?.textContent.trim() ?? '';
+        // const address = doc.querySelector('div.info-mother p.addres')?.innerHTML.trim() ?? '';
+        const addressElement = doc.querySelector('div.info-mother p.address');
+        const address = addressElement.textContent.trim() ?? '';
+        // console.log('address=', address);
+        const website = doc.querySelector('div.info-mother p.website a')?.href;
+        const email = doc.querySelector('div.info-mother .email > a')?.href.replace('mailto:', '') ?? '';
+        // console.log('email=', email)
+        const phone = doc.querySelector('div.info-mother p.phone > a')?.textContent.trim() ?? '';
+        const firm = doc.querySelector('div.info-mother p.firm')?.textContent.trim() ?? '';
+        console.log(title, address, email, phone, firm);
+        products.push({ title, address, website, email, phone, firm });
+        console.log(products);
         return products;
     };
 
