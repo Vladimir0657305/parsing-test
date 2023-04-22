@@ -9,6 +9,7 @@ function McbatxParser() {
     let products = [];
     let lastPage = 1;
     const [searchTerm, setSearchTerm] = useState('');
+    const [isLoading, setLoading] = useState(false);
     const valueToRemove = 'http://localhost:3000';
     let hrefValuesArray = [];
 
@@ -48,18 +49,12 @@ function McbatxParser() {
                 index++;
             }
         }
-        downloadCsv(products);
-    };
-
-    const nextSearch = async () => {
-
-
-        // console.log('2222=', products);
+        console.log('index => ', index, 'isLoading => ', isLoading);
+        if (isLoading && index == lastPage - 1) {
+            downloadCsv(products);
+        }
 
     };
-
-
-
 
     const handleSearchTermChange = (event) => {
         setSearchTerm(event.target.value);
@@ -103,7 +98,9 @@ function McbatxParser() {
         const firm = doc.querySelector('div.info-mother p.firm')?.textContent.trim() ?? '';
         console.log(title, address, email, phone, firm);
         products.push({ title, address, website, email, phone, firm });
-        console.log(products);
+        console.log(products, isLoading);
+        setLoading(true);
+        console.log(isLoading);
         return products;
     };
 
