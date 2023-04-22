@@ -20,6 +20,8 @@ function McbatxParser() {
 
 
     const delay = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
+    const later = (delay, value) => new Promise(resolve => setTimeout(resolve, delay, value));
+
 
     const fetchData = async (url) => {
         const response = await axios.get(url);
@@ -66,6 +68,8 @@ function McbatxParser() {
         doc.querySelectorAll('div.member-info h4 > a').forEach(async (item) => {
             link = item.href.replace(valueToRemove, '');
             const nameMan = item.innerHTML;
+            const delayTime = Math.floor(Math.random() * 3001) + 1000;
+            await delay(delayTime);
             await pageSearch(link);
             console.log(nameMan, '===>', link);
             // products.push({ nameMan });
@@ -82,7 +86,9 @@ function McbatxParser() {
     const pageSearch = async (link) => {
         const delayTime = Math.floor(Math.random() * 3001) + 1000;
         console.log('pageSearch=>', delayTime, `${PROXY_URL}${PAGE_URL}${link}`);
-        await delay(delayTime);
+        // await delay(delayTime);
+        await later(delayTime); // где ms - количество миллисекунд задержки
+
         const response = await fetchData(`${PROXY_URL}${PAGE_URL}${link}`);
         products = parsePage(response);
 
