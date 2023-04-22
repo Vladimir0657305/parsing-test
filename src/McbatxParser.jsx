@@ -60,16 +60,22 @@ function McbatxParser() {
         setSearchTerm(event.target.value);
     };
 
-    const parseProducts = (html) => {
+    const parseProducts = async (html) => {
         const parser = new DOMParser();
         const doc = parser.parseFromString(html, 'text/html');
-        doc.querySelectorAll('div.member-info h4 > a').forEach((item) => {
+        doc.querySelectorAll('div.member-info h4 > a').forEach(async (item) => {
             link = item.href.replace(valueToRemove, '');
             const nameMan = item.innerHTML;
-            pageSearch(link);
+            await pageSearch(link);
             console.log(nameMan, '===>', link);
             // products.push({ nameMan });
+            // const delayTime = Math.floor(Math.random() * 3001) + 1000;
+            // console.log('pageSearch=>', delayTime, `${PROXY_URL}${PAGE_URL}${link}`);
+            // await delay(delayTime);
+            // const response = await fetchData(`${PROXY_URL}${PAGE_URL}${link}`);
+            // products = parsePage(response);
         });
+
         return products;
     };
 
