@@ -29,67 +29,83 @@ function Bloomberg_profiles_company() {
     };
 
 
-    const handleSearchSubmit = async (event) => {
+    const handleSearchSubmit = (event) => {
         event.preventDefault();
-        let index = 0;
-        while (index < lastPage) {
-            const delayTime = Math.floor(Math.random() * 3001) + 2000;
-            await delay(delayTime);
-            let response = await fetchData(`${PROXY_URL}${SEARCH_URL}`);
-            products = parseProducts(response);
-            index++;
-            paginator++;
+        // Функция парсинга сайта
+        for (let paginator = 0; paginator < lastPage; paginator++) {
+            parseSite(paginator);
         }
-        downloadCsv(products);
     };
 
+    const parseSite = async (paginator) => {
+        const PROXY_URL = 'https://cors-anywhere.herokuapp.com/'; // Прокси-сервер для обхода CORS
+        const SEARCH_URL = `https://www.bloomberg.com/feeds/bbiz/sitemap_profiles_company_${paginator}.xml`; // URL страницы со списком клиентов
+        let csvContent = 'data:text/csv;charset=utf-8,'; // Содержимое CSV-файла
 
+        try {
+            // Загрузка страницы со списком клиентов
 
-    const parseProducts = (html) => {
-        const parser = new DOMParser();
-        const doc = parser.parseFromString(html, 'text/html');
-
-        doc.querySelectorAll('loc ').forEach(async (item) => {
-            let link = item.textContent.trim() ?? '';
-            products.push(link);
-            console.log('LINK=', link);
+            // let response = '';
             const delayTime = Math.floor(Math.random() * 3001) + 2000;
             await delay(delayTime);
-            await nextSearch(link);
+            // setTimeout(async () => {
+            const response = await fetch(`${PROXY_URL}${SEARCH_URL}`);
+            const html = await response.text();
+            // console.log(html);
+            // }, delayTime);
 
-        });
 
-        return products;
+            // Парсинг страницы
+            const parser = new DOMParser();
+            const doc = parser.parseFromString(html, 'text/html');
+            const locElements = doc.querySelectorAll('loc');
+            console.log(locElements);
+
+            // Обход списка клиентов
+            let ind = 0;
+            while (ind < locElements.length - 1) {
+                let link = locElements[ind].textContent.trim() ?? '';
+                console.log(link);
+                // }
+                // locElements.forEach(async (item) => {
+                //     let link = item.textContent.trim() ?? '';
+
+
+                // Загрузка страницы клиента
+                const delayTime2 = Math.floor(Math.random() * 3001) + 2000;
+                await delay(delayTime2);
+                // setTimeout(async () => {
+                let response = await fetch(`${PROXY_URL}${link}`);
+                console.log(response);
+                let html2 = await response.text();
+                console.log(html2);
+                // }, delayTime2);
+
+                // const response = await fetch(`${PROXY_URL}${link}`);
+                // const html = await response.text();
+                let clientDoc = parser.parseFromString(html2, 'text/html');
+
+                // Получение заголовка клиента
+                let title = clientDoc.querySelector('h1.companyName__0081a26a89')?.textContent.trim() ?? '';
+                console.log(title);
+
+                // Добавление информации о ссылке на клиента и заголовке в CSV-файл
+                const row = `${link},${title}\n`;
+                csvContent += row;
+                ind++;
+            };
+
+            // Запись CSV-файла
+            const encodedUri = encodeURI(csvContent);
+            const link = document.createElement('a');
+            link.setAttribute('href', encodedUri);
+            link.setAttribute('download', 'clients.csv');
+            document.body.appendChild(link);
+            link.click();
+        } catch (error) {
+            console.error('Произошла ошибка:', error);
+        }
     };
-
-
-    const nextSearch = async (link) => {
-        let t = `${PROXY_URL}${link}`;
-        console.log('000000000=', t);
-        const response = await fetchData(`${PROXY_URL}${link}`);
-        products = parsePage(response);
-        console.log('2222=', products);
-
-    };
-
-    const parsePage = (html) => {
-        const parser = new DOMParser();
-        const doc = parser.parseFromString(html, 'text/html');
-        // h1.companyName__0081a26a89
-        const title = doc.querySelector('h1.companyName__0081a26a89')?.textContent.trim() ?? '';
-        console.log(title);
-        products.push(title);
-        return products;
-    }
-
-    const downloadCsv = (products) => {
-        const csv = Papa.unparse(products);
-        const downloadLink = document.createElement('a');
-        downloadLink.setAttribute('href', 'data:text/csv;charset=utf-8,' + encodeURIComponent(csv));
-        downloadLink.setAttribute('download', 'Bloomberg_profiles_company.csv');
-        downloadLink.click();
-    };
-
 
     return (
         <div>
