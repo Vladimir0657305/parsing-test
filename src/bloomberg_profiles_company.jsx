@@ -13,11 +13,11 @@ function Bloomberg_profiles_company() {
     const [searchTerm, setSearchTerm] = useState('');
     const valueToRemove = 'http://localhost:3000';
     let hrefValuesArray = [];
+    // 
 
-    const PROXY_URL = 'https://cors-anywhere.herokuapp.com/';
-    const SEARCH_URL = `https://www.bloomberg.com/feeds/bbiz/sitemap_profiles_company_${paginator}.xml`;
-    const NEXT_URL = `https://www.amazon.com`;
-
+    // const PROXY_URL = 'https://cors-anywhere.herokuapp.com/';
+    const PROXY_URL = 'https://api.allorigins.win/raw?url=';
+    const SEARCH_URL = `https://www.bloomberg.com/feeds/bbiz/sitemap_profiles_company_${paginator}.xml`; // URL страницы со списком клиентов
 
     const delay = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 
@@ -41,10 +41,9 @@ function Bloomberg_profiles_company() {
 
     const parseSite = async (paginator) => {
         // const PROXY_URL = 'https://cors-anywhere.herokuapp.com/'; // Прокси-сервер для обхода CORS
-        const PROXY_URL = 'https://api.codetabs.com/v1/proxy?quest='; // Прокси-сервер для обхода CORS
-        const SEARCH_URL = `https://www.bloomberg.com/feeds/bbiz/sitemap_profiles_company_${paginator}.xml`; // URL страницы со списком клиентов
+        // const PROXY_URL = 'https://api.allorigins.win/raw?url='; 
+        // const SEARCH_URL = `https://www.bloomberg.com/feeds/bbiz/sitemap_profiles_company_${paginator}.xml`;
         let csvContent = 'data:text/csv;charset=utf-8,'; // Содержимое CSV-файла
-
         try {
             // Загрузка страницы со списком клиентов
 
@@ -67,7 +66,7 @@ function Bloomberg_profiles_company() {
             // Обход списка клиентов
             let ind = 0;
             // while (ind < locElements.length - 1) {
-            while (ind < 3) {
+            while (ind < 2) {
                 let link = locElements[ind].textContent.trim() ?? '';
                 console.log(link);
                 // }
@@ -80,18 +79,20 @@ function Bloomberg_profiles_company() {
                 await delay(delayTime2);
                 // setTimeout(async () => {
                 let response = await fetch(`${PROXY_URL}${link}`);
-                console.log(response);
+                // console.log(response);
                 let html2 = await response.text();
-                console.log(html2);
+                // console.log(html2);
                 // }, delayTime2);
 
                 // const response = await fetch(`${PROXY_URL}${link}`);
                 // const html = await response.text();
                 let clientDoc = parser.parseFromString(html2, 'text/html');
+                console.log(clientDoc);
 
                 // Получение заголовка клиента
-                let title = clientDoc.querySelector('h1.companyName__0081a26a89')?.textContent.trim() ?? '';
+                let title = clientDoc.querySelector('.companyName__0081a26a89')?.textContent.trim() ?? '';
                 console.log(title);
+                console.log(clientDoc.querySelector('.companyName__0081a26a89'));
 
                 // Добавление информации о ссылке на клиента и заголовке в CSV-файл
                 const row = `${link},${title}\n`;

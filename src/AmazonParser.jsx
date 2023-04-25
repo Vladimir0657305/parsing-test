@@ -31,7 +31,6 @@ function AmazonParser() {
         while (index < 10) {
             if (paginator === undefined) {
                 const temp = `${PROXY_URL}${SEARCH_URL}${searchTerm}`;
-                console.log('TEMP=>', temp);
                 let response = await fetchData(`${PROXY_URL}${SEARCH_URL}${searchTerm}`);
                 products = parseProducts(response);
                 index++;
@@ -62,6 +61,7 @@ function AmazonParser() {
     const parseProducts = (html) => {
         const parser = new DOMParser();
         const doc = parser.parseFromString(html, 'text/html');
+console.log(doc);
 
         let link = doc.querySelector('li.a-last > a');
         console.log('LINK=', link);
