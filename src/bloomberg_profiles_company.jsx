@@ -66,7 +66,7 @@ function Bloomberg_profiles_company() {
             // Обход списка клиентов
             let ind = 0;
             // while (ind < locElements.length - 1) {
-            while (ind < 2) {
+            while (ind < 3) {
                 let link = locElements[ind].textContent.trim() ?? '';
                 console.log(link);
                 // }
@@ -77,25 +77,29 @@ function Bloomberg_profiles_company() {
                 // Загрузка страницы клиента
                 const delayTime2 = Math.floor(Math.random() * 3001) + 2000;
                 await delay(delayTime2);
-                // setTimeout(async () => {
                 let response = await fetch(`${PROXY_URL}${link}`);
-                // console.log(response);
                 let html2 = await response.text();
-                // console.log(html2);
-                // }, delayTime2);
 
-                // const response = await fetch(`${PROXY_URL}${link}`);
-                // const html = await response.text();
                 let clientDoc = parser.parseFromString(html2, 'text/html');
-                console.log(clientDoc);
 
                 // Получение заголовка клиента
                 let title = clientDoc.querySelector('.companyName__0081a26a89')?.textContent.trim() ?? '';
                 console.log(title);
-                console.log(clientDoc.querySelector('.companyName__0081a26a89'));
+                // infoTableItemValue__fcffc58c7b
+                let description = clientDoc.querySelector('.description__d0544c8a94')?.textContent.trim() ?? '';
+                // Извлечение значений из clientDoc
+                let sector = clientDoc.querySelector('.infoTableItemLabel__4359e25f3a:contains("SECTOR") + .infoTableItemValue__fcffc58c7b')?.textContent.trim() ?? '';
+                console.log(sector);
+                // let industry = clientDoc.querySelector('.infoTableItemLabel__4359e25f3a:contains("INDUSTRY") + .infoTableItemValue__fcffc58c7b')?.textContent.trim() ?? '';
+                // let subIndustry = clientDoc.querySelector('.infoTableItemLabel__4359e25f3a:contains("SUB-INDUSTRY") + .infoTableItemValue__fcffc58c7b')?.textContent.trim() ?? '';
+                // let incorporated = clientDoc.querySelector('.infoTableItemLabel__4359e25f3a:contains("INCORPORATED") + .infoTableItemValue__fcffc58c7b')?.textContent.trim() ?? '';
+                // let address = clientDoc.querySelector('.infoTableItemLabel__4359e25f3a:contains("ADDRESS") + .infoTableItemValue__fcffc58c7b')?.textContent.trim() ?? '';
+                // let website = clientDoc.querySelector('.infoTableItemLabel__4359e25f3a:contains("WEBSITE") + .infoTableItemValue__fcffc58c7b')?.textContent.trim() ?? '';
+                // let noOfEmployees = clientDoc.querySelector('.infoTableItemLabel__4359e25f3a:contains("NO. OF EMPLOYEES") + .infoTableItemValue__fcffc58c7b')?.textContent.trim() ?? '';
 
                 // Добавление информации о ссылке на клиента и заголовке в CSV-файл
-                const row = `${link},${title}\n`;
+                // const row = `${link},${title},${description},${sector},${industry},${subIndustry},${incorporated},${address},${website},${noOfEmployees}\n`;
+                const row = `${link},${title},${description},${sector}\n`;
                 csvContent += row;
                 ind++;
             };
