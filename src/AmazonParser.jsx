@@ -11,7 +11,8 @@ function AmazonParser() {
     const valueToRemove = 'http://localhost:3000';
     let hrefValuesArray = [];
 
-    const PROXY_URL = 'https://cors-anywhere.herokuapp.com/';
+    // const PROXY_URL = 'https://cors-anywhere.herokuapp.com/';
+    const PROXY_URL = 'https://api.codetabs.com/v1/proxy?quest=';
     const SEARCH_URL = `https://www.amazon.com/s?k=`;
     const NEXT_URL = `https://www.amazon.com`;
 
@@ -29,6 +30,8 @@ function AmazonParser() {
         let index = 0;
         while (index < 10) {
             if (paginator === undefined) {
+                const temp = `${PROXY_URL}${SEARCH_URL}${searchTerm}`;
+                console.log('TEMP=>', temp);
                 let response = await fetchData(`${PROXY_URL}${SEARCH_URL}${searchTerm}`);
                 products = parseProducts(response);
                 index++;
@@ -48,7 +51,7 @@ function AmazonParser() {
         const response = await fetchData(`${PROXY_URL}${NEXT_URL}${paginator}`);
         products = parseProducts(response);
         console.log('2222=', products);
-        
+
     };
 
 
