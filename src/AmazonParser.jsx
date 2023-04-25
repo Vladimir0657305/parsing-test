@@ -12,7 +12,7 @@ function AmazonParser() {
     let hrefValuesArray = [];
 
     // const PROXY_URL = 'https://cors-anywhere.herokuapp.com/';
-    const PROXY_URL = 'https://api.codetabs.com/v1/proxy?quest=';
+    const PROXY_URL = 'https://api.allorigins.win/raw?url=';
     const SEARCH_URL = `https://www.amazon.com/s?k=`;
     const NEXT_URL = `https://www.amazon.com`;
 
