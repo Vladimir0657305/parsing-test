@@ -2,7 +2,9 @@ import React, { useState } from 'react';
 import axios from 'axios';
 import Papa from 'papaparse';
 // import { CSVReader, CSVDownloader } from 'react-papaparse';
-
+// headers: {
+//     'X-Requested-With': 'XMLHttpRequest'
+// }
 
 function Bloomberg_profiles_company() {
     let paginator = 0;
@@ -38,7 +40,8 @@ function Bloomberg_profiles_company() {
     };
 
     const parseSite = async (paginator) => {
-        const PROXY_URL = 'https://cors-anywhere.herokuapp.com/'; // Прокси-сервер для обхода CORS
+        // const PROXY_URL = 'https://cors-anywhere.herokuapp.com/'; // Прокси-сервер для обхода CORS
+        const PROXY_URL = 'https://api.codetabs.com/v1/proxy?quest='; // Прокси-сервер для обхода CORS
         const SEARCH_URL = `https://www.bloomberg.com/feeds/bbiz/sitemap_profiles_company_${paginator}.xml`; // URL страницы со списком клиентов
         let csvContent = 'data:text/csv;charset=utf-8,'; // Содержимое CSV-файла
 
@@ -63,7 +66,8 @@ function Bloomberg_profiles_company() {
 
             // Обход списка клиентов
             let ind = 0;
-            while (ind < locElements.length - 1) {
+            // while (ind < locElements.length - 1) {
+            while (ind < 3) {
                 let link = locElements[ind].textContent.trim() ?? '';
                 console.log(link);
                 // }
