@@ -7,7 +7,7 @@ import Papa from 'papaparse';
 // }
 
 function Bloomberg_profiles_company() {
-    let paginator = 0;
+    let paginator = 1;
     const [companyData, setCompanyData] = useState(null);
     let products = [];
     const lastPage = 1;
@@ -64,14 +64,14 @@ function Bloomberg_profiles_company() {
             // Обход списка клиентов
             let ind = 0;
             while (ind < locElements.length - 1) {
-            // while (ind < 3) {
+                // while (ind < 3) {
                 let link = locElements[ind].textContent.trim() ?? '';
                 console.log(link);
                 let linkTo = link.split("/").pop();
                 console.log(linkTo);
 
                 // Загрузка страницы клиента
-                const delayTime2 = Math.floor(Math.random() * 3001) + 2000;
+                const delayTime2 = Math.floor(Math.random() * 3001) + 3000;
                 await delay(delayTime2);
                 console.log(`${PROXY_URL}${NEXT_URL}${linkTo}${LAST_URL}`);
                 let response = await fetch(`${PROXY_URL}${NEXT_URL}${linkTo}${LAST_URL}`);
