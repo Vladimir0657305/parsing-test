@@ -81,14 +81,14 @@ function Bloomberg_profiles_company() {
                 let html2 = await response.text();
 
                 let clientDoc = parser.parseFromString(html2, 'text/html');
-
+                console.log(clientDoc);
                 // Получение заголовка клиента
                 let title = clientDoc.querySelector('.companyName__0081a26a89')?.textContent.trim() ?? '';
                 console.log(title);
                 // infoTableItemValue__fcffc58c7b
                 let description = clientDoc.querySelector('.description__d0544c8a94')?.textContent.trim() ?? '';
                 // Извлечение значений из clientDoc
-                let sector = clientDoc.querySelector('.infoTableItemLabel__4359e25f3a:contains("SECTOR") + .infoTableItemValue__fcffc58c7b')?.textContent.trim() ?? '';
+                let sector = clientDoc.querySelector('.shimmeringLine__66fa2fc7c2')?.textContent.trim() ?? '';
                 console.log(sector);
                 // let industry = clientDoc.querySelector('.infoTableItemLabel__4359e25f3a:contains("INDUSTRY") + .infoTableItemValue__fcffc58c7b')?.textContent.trim() ?? '';
                 // let subIndustry = clientDoc.querySelector('.infoTableItemLabel__4359e25f3a:contains("SUB-INDUSTRY") + .infoTableItemValue__fcffc58c7b')?.textContent.trim() ?? '';
