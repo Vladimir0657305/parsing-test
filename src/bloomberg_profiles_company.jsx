@@ -8,6 +8,7 @@ import Papa from 'papaparse';
 
 function Bloomberg_profiles_company() {
     let paginator = 0;
+    const [companyData, setCompanyData] = useState(null);
     let products = [];
     const lastPage = 1;
     const [searchTerm, setSearchTerm] = useState('');
@@ -18,6 +19,9 @@ function Bloomberg_profiles_company() {
     // const PROXY_URL = 'https://cors-anywhere.herokuapp.com/';
     const PROXY_URL = 'https://api.allorigins.win/raw?url=';
     const SEARCH_URL = `https://www.bloomberg.com/feeds/bbiz/sitemap_profiles_company_${paginator}.xml`; // URL страницы со списком клиентов
+    const NEXT_URL = `https://www.bloomberg.com/markets2/api/datastrip/`;
+    const LAST_URL = `?locale=en&customTickerList=true`;
+
 
     const delay = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 
@@ -46,60 +50,49 @@ function Bloomberg_profiles_company() {
         let csvContent = 'data:text/csv;charset=utf-8,'; // Содержимое CSV-файла
         try {
             // Загрузка страницы со списком клиентов
-
-            // let response = '';
             const delayTime = Math.floor(Math.random() * 3001) + 2000;
             await delay(delayTime);
-            // setTimeout(async () => {
             const response = await fetch(`${PROXY_URL}${SEARCH_URL}`);
             const html = await response.text();
-            // console.log(html);
-            // }, delayTime);
-
 
             // Парсинг страницы
             const parser = new DOMParser();
             const doc = parser.parseFromString(html, 'text/html');
             const locElements = doc.querySelectorAll('loc');
-            console.log(locElements);
+            // console.log(locElements);
 
             // Обход списка клиентов
             let ind = 0;
-            // while (ind < locElements.length - 1) {
-            while (ind < 3) {
+            while (ind < locElements.length - 1) {
+            // while (ind < 3) {
                 let link = locElements[ind].textContent.trim() ?? '';
                 console.log(link);
-                // }
-                // locElements.forEach(async (item) => {
-                //     let link = item.textContent.trim() ?? '';
-
+                let linkTo = link.split("/").pop();
+                console.log(linkTo);
 
                 // Загрузка страницы клиента
                 const delayTime2 = Math.floor(Math.random() * 3001) + 2000;
                 await delay(delayTime2);
-                let response = await fetch(`${PROXY_URL}${link}`);
-                let html2 = await response.text();
+                console.log(`${PROXY_URL}${NEXT_URL}${linkTo}${LAST_URL}`);
+                let response = await fetch(`${PROXY_URL}${NEXT_URL}${linkTo}${LAST_URL}`);
+                let html2 = await response.json();
+                console.log(html2);
+                setCompanyData(html2);
 
                 let clientDoc = parser.parseFromString(html2, 'text/html');
-                console.log(clientDoc);
-                // Получение заголовка клиента
-                let title = clientDoc.querySelector('.companyName__0081a26a89')?.textContent.trim() ?? '';
-                console.log(title);
-                // infoTableItemValue__fcffc58c7b
-                let description = clientDoc.querySelector('.description__d0544c8a94')?.textContent.trim() ?? '';
-                // Извлечение значений из clientDoc
-                let sector = clientDoc.querySelector('.shimmeringLine__66fa2fc7c2')?.textContent.trim() ?? '';
-                console.log(sector);
-                // let industry = clientDoc.querySelector('.infoTableItemLabel__4359e25f3a:contains("INDUSTRY") + .infoTableItemValue__fcffc58c7b')?.textContent.trim() ?? '';
-                // let subIndustry = clientDoc.querySelector('.infoTableItemLabel__4359e25f3a:contains("SUB-INDUSTRY") + .infoTableItemValue__fcffc58c7b')?.textContent.trim() ?? '';
-                // let incorporated = clientDoc.querySelector('.infoTableItemLabel__4359e25f3a:contains("INCORPORATED") + .infoTableItemValue__fcffc58c7b')?.textContent.trim() ?? '';
-                // let address = clientDoc.querySelector('.infoTableItemLabel__4359e25f3a:contains("ADDRESS") + .infoTableItemValue__fcffc58c7b')?.textContent.trim() ?? '';
-                // let website = clientDoc.querySelector('.infoTableItemLabel__4359e25f3a:contains("WEBSITE") + .infoTableItemValue__fcffc58c7b')?.textContent.trim() ?? '';
-                // let noOfEmployees = clientDoc.querySelector('.infoTableItemLabel__4359e25f3a:contains("NO. OF EMPLOYEES") + .infoTableItemValue__fcffc58c7b')?.textContent.trim() ?? '';
+                // console.log(clientDoc);
+                // Получение данных клиента
+                let title = html2[0]['name'];
+                let sector = html2[0]['bicsSector'];
+                let subSector = html2[0]['bicsSubIndustry'];
+                let address = html2[0]['companyAddress'].replace(/\n/g, "");
+                // let description = clientDoc.querySelector('.description__d0544c8a94')?.textContent.trim() ?? '';
+                let description = html2[0]['companyDescription'];
+                let phone = html2[0]['companyPhone'];
+                let website = html2[0]['companyWebsite'];
+                let foundedYear = html2[0]['foundedYear'];
 
-                // Добавление информации о ссылке на клиента и заголовке в CSV-файл
-                // const row = `${link},${title},${description},${sector},${industry},${subIndustry},${incorporated},${address},${website},${noOfEmployees}\n`;
-                const row = `${link},${title},${description},${sector}\n`;
+                const row = `${link},${title},${sector},${subSector},${address},${description},${phone},${website},${foundedYear}\n`;
                 csvContent += row;
                 ind++;
             };
