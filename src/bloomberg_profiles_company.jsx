@@ -7,10 +7,10 @@ import Papa from 'papaparse';
 // }
 
 function Bloomberg_profiles_company() {
-    let paginator = 1;
+    let paginator = 8;
     const [companyData, setCompanyData] = useState(null);
     let products = [];
-    const lastPage = 1;
+    const lastPage = 11;
     const [searchTerm, setSearchTerm] = useState('');
     const valueToRemove = 'http://localhost:3000';
     let hrefValuesArray = [];
