@@ -63,7 +63,8 @@ function AmazonParser() {
         const doc = parser.parseFromString(html, 'text/html');
 console.log(doc);
 
-        let link = doc.querySelector('li.a-last > a');
+        // let link = doc.querySelector('li.a-last > a');
+        let link = doc.querySelector('.a-pagination .a-disabled');
         console.log('LINK=', link);
         let temp = link?.href.replace(valueToRemove, '');
         paginator = temp;

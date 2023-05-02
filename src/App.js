@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import AmazonParser from './AmazonParser';
 import McbatxParser from './McbatxParser';
+// import Bloomberg_profiles_company from './Bloomberg_profiles_company';
 import Bloomberg_profiles_company from './Bloomberg_profiles_company';
 import Papa from 'papaparse';
 import './App.css';
@@ -48,26 +49,26 @@ function App() {
   
   
 
-    useEffect(() => {
-      const fetchData = async () => {
-        try {
-          const response = await fetch(`${PROXY_URL}${SEARCH_URL}`);
-          const data = await response.text();
-          // console.log(data);
-          const raw = data.split('tbody>')[1].split('</tbody')[0];
-          const arr = raw.split("<td>");
-          for (let i = 0; i < arr.length - 2; i += 7) {
-            console.log(arr[i + 1].slice(0, -5), arr[i + 2].slice(0, -5));
-          }
-          setProxyData(raw); // сохраняем "сырой" контент таблицы в состоянии компонента
-        } catch (error) {
-          setError('Failed to fetch data');
-          console.error(error);
-        }
-      };
+    // useEffect(() => {
+    //   const fetchData = async () => {
+    //     try {
+    //       const response = await fetch(`${PROXY_URL}${SEARCH_URL}`);
+    //       const data = await response.text();
+          
+    //       const raw = data.split('tbody>')[1].split('</tbody')[0];
+    //       const arr = raw.split("<td>");
+    //       for (let i = 0; i < arr.length - 2; i += 7) {
+    //         console.log(arr[i + 1].slice(0, -5), arr[i + 2].slice(0, -5));
+    //       }
+    //       setProxyData(raw);
+    //     } catch (error) {
+    //       setError('Failed to fetch data');
+    //       console.error(error);
+    //     }
+    //   };
 
-      fetchData();
-    }, []);
+    //   fetchData();
+    // }, []);
 
   
 
@@ -76,7 +77,7 @@ function App() {
 
   return (
     <>
-      <div><pre>{JSON.stringify(fig, null, 2)}</pre></div>
+      {/* <div><pre>{JSON.stringify(fig, null, 2)}</pre></div> */}
       <AmazonParser/>
       {/* <McbatxParser/> */}
       <Bloomberg_profiles_company/>

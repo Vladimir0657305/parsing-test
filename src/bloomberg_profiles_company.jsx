@@ -7,10 +7,10 @@ import Papa from 'papaparse';
 // }
 
 function Bloomberg_profiles_company() {
-    let paginator = 8;
+    let paginator = 11;
     const [companyData, setCompanyData] = useState(null);
     let products = [];
-    const lastPage = 11;
+    const lastPage = 14;
     const [searchTerm, setSearchTerm] = useState('');
     const valueToRemove = 'http://localhost:3000';
     let hrefValuesArray = [];
@@ -25,21 +25,20 @@ function Bloomberg_profiles_company() {
 
     const delay = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 
-    const fetchData = async (url) => {
-        const response = await axios.get(url);
-        return response.data;
-    };
-
     const handleSearchTermChange = (event) => {
         setSearchTerm(event.target.value);
     };
 
 
-    const handleSearchSubmit = (event) => {
+    const handleSearchSubmit = async (event) => {
         event.preventDefault();
         // Функция парсинга сайта
-        for (let paginator = 0; paginator < lastPage; paginator++) {
-            parseSite(paginator);
+        while (paginator < lastPage) {
+        // for (let paginator = 0; paginator < lastPage; paginator++) {
+            const delayTime2 = Math.floor(Math.random() * 3001) + 3000;
+            await delay(delayTime2);
+            await parseSite(paginator);
+            paginator++;
         }
     };
 
@@ -101,7 +100,7 @@ function Bloomberg_profiles_company() {
             const encodedUri = encodeURI(csvContent);
             const link = document.createElement('a');
             link.setAttribute('href', encodedUri);
-            link.setAttribute('download', 'clients.csv');
+            link.setAttribute('download', `clients${paginator}.csv`);
             document.body.appendChild(link);
             link.click();
         } catch (error) {
