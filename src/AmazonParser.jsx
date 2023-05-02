@@ -64,8 +64,13 @@ function AmazonParser() {
 console.log(doc);
 
         // let link = doc.querySelector('li.a-last > a');
-        let link = doc.querySelector('.a-pagination .a-disabled');
-        console.log('LINK=', link);
+        // let link = doc.querySelector('.s-pagination-item.s-pagination-disabled');
+        let link = doc.querySelectorAll('.s-pagination-container .s-pagination-disabled');
+        let value = link[link.length - 1].textContent;
+        console.log('UUUUUUU=>', value);
+
+        // let link = doc.getElementById('#a-page');
+        // console.log('LINK=', link);
         let temp = link?.href.replace(valueToRemove, '');
         paginator = temp;
         console.log('paginator=', paginator);
