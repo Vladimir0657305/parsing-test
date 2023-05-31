@@ -1,4 +1,4 @@
-В коде 
+Г‚ ГЄГ®Г¤ГҐ 
 while (index < 4) {
             if (paginator === undefined) {
                 let response = await axios.get(`${PROXY_URL}${SEARCH_URL}${searchTerm}`);
@@ -20,5 +20,5 @@ while (index < 4) {
         products = parseProducts(response.data);
         downloadCsv(products);
     }
-счетчик в цикле while пробегант все значения до того, как отработает запрос let response = await axios.get(`${PROXY_URL}${NEXT_URL}${paginator}`);
-Как сделать увеличение счетчика index после получения ответа await axios.get(`${PROXY_URL}${NEXT_URL}${paginator}`) ?
+СЃС‡РµС‚С‡РёРє РІ С†РёРєР»Рµ while РїСЂРѕР±РµРіР°РЅС‚ РІСЃРµ Р·РЅР°С‡РµРЅРёСЏ РґРѕ С‚РѕРіРѕ, РєР°Рє РѕС‚СЂР°Р±РѕС‚Р°РµС‚ Р·Р°РїСЂРѕСЃ let response = await axios.get(`${PROXY_URL}${NEXT_URL}${paginator}`);
+РљР°Рє СЃРґРµР»Р°С‚СЊ СѓРІРµР»РёС‡РµРЅРёРµ СЃС‡РµС‚С‡РёРєР° index РїРѕСЃР»Рµ РїРѕР»СѓС‡РµРЅРёСЏ РѕС‚РІРµС‚Р° await axios.get(`${PROXY_URL}${NEXT_URL}${paginator}`) ?
