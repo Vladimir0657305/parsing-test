@@ -1,4 +1,4 @@
-Â êîäå 
+В коде
 while (index < 4) {
             if (paginator === undefined) {
                 let response = await axios.get(`${PROXY_URL}${SEARCH_URL}${searchTerm}`);
